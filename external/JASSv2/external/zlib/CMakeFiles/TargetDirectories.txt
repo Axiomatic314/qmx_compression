@@ -1,0 +1,13 @@
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/zlib.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/zlibstatic.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/example.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/minigzip.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/example64.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/minigzip64.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/test.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/edit_cache.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/rebuild_cache.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/list_install_components.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/install.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/install/local.dir
+/home/harka424/Documents/JASSv2/external/zlib/CMakeFiles/install/strip.dir
