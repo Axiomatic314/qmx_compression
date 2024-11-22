@@ -30,17 +30,17 @@ public:
 } ;
 
 extern "C" {
-    uint64_t something_construct(void)
+    void *something_construct(void)
         {
-        return (uint64_t)(new something());
+        return (void *)(new something());
         }
 
-    void something_print(uint64_t self)
+    void something_print(void *self)
         {
         ((something *)self)->print();
         }
 
-    void something_set(uint64_t self, uint64_t value)
+    void something_set(void *self, uint64_t value)
         {
         ((something *)self)->x = value;
         }
