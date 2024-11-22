@@ -24,3 +24,8 @@ Cargo.lock
 # Added by cargo
 
 /target
+
+
+external/JASSv2/build
+external/JASSv2/external
+.vscode
