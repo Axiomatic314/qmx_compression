@@ -1,1 +1,0 @@
-cmd='cmake;-G;Unix Makefiles;/home/harka424/Documents/JASSv2/external/zlib/src/zlib'
