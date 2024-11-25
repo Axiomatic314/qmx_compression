@@ -8,6 +8,7 @@ libc = "0.2.164"
 
 [build-dependencies]
 cc = "1.2.1"
+cmake = "0.1.51"
 
 [[bin]]
 name = "compression"
