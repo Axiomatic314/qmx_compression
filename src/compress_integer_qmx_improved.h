@@ -10,10 +10,11 @@
 	@author Andrew Trotman
 	@copyright 2016 Andrew Trotman
 */
-#pragma once
+// #pragma once
 
 #include <vector>
 #include <stdint.h>
+#include <stdlib.h>
 // #include "compress_integer.h"
 
 namespace JASS

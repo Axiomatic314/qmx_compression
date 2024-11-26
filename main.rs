@@ -23,16 +23,17 @@ fn encode(impact: u16, docs: &[u32]) -> (MetaData, Vec<u8>){
     let source = source_integers.as_mut_ptr();
     let source_length = source_integers.len();
 
-    let mut output = vec![0u8; 8 * docs.len()];
-    let encoded = output.as_mut_ptr();
-    let encoded_buffer_length = output.len();
+    let mut compressed = vec![0u8; 8 * docs.len()];
+    let encoded = compressed.as_mut_ptr();
+    let encoded_buffer_length = compressed.len();
 
-    //compress d-gaps using qmx
+    //compress postings using qmx
     unsafe {
         let qmx = qmx_construct();
         let _bytes = qmx_encode(qmx, encoded, encoded_buffer_length, source, source_length);
     }
-
+    let mut output: Vec<u8> = vec![];
+    output.extend_from_slice(&compressed[..source_length]);
     (
         MetaData {
             impact,
@@ -43,16 +44,40 @@ fn encode(impact: u16, docs: &[u32]) -> (MetaData, Vec<u8>){
     )
 }
 
-// fn decode(initial: u32, input: &[u8], output: &mut [u32]) -> usize{
-//     return 0;
-// }
+fn decode(data: &[u8], output_buf: &mut[u32], count: u32){
+// fn decode(data: &[u8], decoded: *mut u32, count: u32){
+    // println!("{:?}", output_buf);
+    println!("{:?}", output_buf.len());
+    let source = data.as_ptr();
+    let source_length = data.len();
+
+    let decoded = output_buf.as_mut_ptr();
+    let integers_to_decode = count as usize;
+
+    unsafe{
+        let qmx = qmx_construct();
+        println!("data:{:?}", data);
+        println!("decoded:{:?} integers_to_decode:{:?} source:{:?} source_length:{:?}", *decoded, integers_to_decode, *source, source_length);
+        qmx_decode(qmx, decoded, integers_to_decode, source, source_length);
+    }
+}
 
 fn main() {
-    println!("Begin.");
-
     let impact = 171;
     let postings = &[127,128,129,130];
+    println!("{:?}",postings);
     let data = encode(impact,postings);
     println!("{:?}", data.1);
+    println!("Metadata: {:?} {:?} {:?}", data.0.impact, data.0.count, data.0.bytes);
 
+    let mut output_buf = [0u32;1000];
+    // let mut output: Vec<u32> = Vec::with_capacity(1000 as usize);
+    // unsafe {output.set_len(1000 as usize);}
+    // let output_buf = output.as_mut_ptr();
+
+    // let mut output_buf = Box::new([0u32;1000]);
+
+    println!("{:?}", output_buf);
+    decode(&data.1, &mut output_buf, data.0.count);  
+    println!("{:?}", output_buf);
 }
