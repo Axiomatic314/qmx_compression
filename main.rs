@@ -1,9 +1,9 @@
 use std::ffi::c_void;
 
 extern {
-    pub fn qmx_construct() -> *mut c_void;
-    pub fn qmx_encode(object: *mut c_void, encoded: *mut u8, encoded_buffer_length: usize, source: *const u32, source_integers: usize) -> usize;
-    pub fn qmx_decode(object: *mut c_void, decoded: *mut u32, integers_to_decode: usize, source: *const u8, source_length: usize);
+    fn qmx_construct() -> *mut c_void;
+    fn qmx_encode(object: *mut c_void, encoded: *mut u8, encoded_buffer_length: usize, source: *const u32, source_integers: usize) -> usize;
+    fn qmx_decode(object: *mut c_void, decoded: *mut u32, integers_to_decode: usize, source: *const u8, source_length: usize);
 }
 
 pub struct MetaData {
@@ -12,7 +12,7 @@ pub struct MetaData {
     pub bytes: u32,
 }
 
-fn encode(impact: u16, docs: &[u32]) -> (MetaData, Vec<u8>){
+pub fn encode(impact: u16, docs: &[u32]) -> (MetaData, Vec<u8>){
     //convert to d-gaps
     let mut source_integers = vec![0u32; docs.len()];
     let mut prev = 0u32;
@@ -28,12 +28,13 @@ fn encode(impact: u16, docs: &[u32]) -> (MetaData, Vec<u8>){
     let encoded_buffer_length = compressed.len();
 
     //compress postings using qmx
+    let mut output: Vec<u8> = vec![];
     unsafe {
         let qmx = qmx_construct();
-        let _bytes = qmx_encode(qmx, encoded, encoded_buffer_length, source, source_length);
+        let bytes = qmx_encode(qmx, encoded, encoded_buffer_length, source, source_length);
+        output.extend_from_slice(&compressed[..bytes]);
     }
-    let mut output: Vec<u8> = vec![];
-    output.extend_from_slice(&compressed[..source_length]);
+
     (
         MetaData {
             impact,
@@ -44,40 +45,42 @@ fn encode(impact: u16, docs: &[u32]) -> (MetaData, Vec<u8>){
     )
 }
 
-fn decode(data: &[u8], output_buf: &mut[u32], count: u32){
-// fn decode(data: &[u8], decoded: *mut u32, count: u32){
-    // println!("{:?}", output_buf);
-    println!("{:?}", output_buf.len());
+pub fn decode(data: &[u8], output_buf: &mut[u32], count: u32){
     let source = data.as_ptr();
     let source_length = data.len();
 
     let decoded = output_buf.as_mut_ptr();
     let integers_to_decode = count as usize;
 
+    //decompress postings using qmx
     unsafe{
         let qmx = qmx_construct();
         println!("data:{:?}", data);
         println!("decoded:{:?} integers_to_decode:{:?} source:{:?} source_length:{:?}", *decoded, integers_to_decode, *source, source_length);
         qmx_decode(qmx, decoded, integers_to_decode, source, source_length);
     }
+    
+    //convert from d-gaps
+    let mut prev = output_buf[0];
+    for curr in 1..integers_to_decode{
+        output_buf[curr] = output_buf[curr] + prev;
+        prev = output_buf[curr];
+    }
 }
 
 fn main() {
     let impact = 171;
     let postings = &[127,128,129,130];
-    println!("{:?}",postings);
+    println!("input postings: {:?}",postings);
+
     let data = encode(impact,postings);
-    println!("{:?}", data.1);
+    println!("encoded postings: {:?}", data.1);
     println!("Metadata: {:?} {:?} {:?}", data.0.impact, data.0.count, data.0.bytes);
 
     let mut output_buf = [0u32;1000];
-    // let mut output: Vec<u32> = Vec::with_capacity(1000 as usize);
-    // unsafe {output.set_len(1000 as usize);}
-    // let output_buf = output.as_mut_ptr();
-
-    // let mut output_buf = Box::new([0u32;1000]);
-
-    println!("{:?}", output_buf);
     decode(&data.1, &mut output_buf, data.0.count);  
-    println!("{:?}", output_buf);
+    let mut output = vec![];
+    output.extend_from_slice(&output_buf[..(data.0.count as usize)]);
+    println!("output postings: {:?}", output);
+
 }
