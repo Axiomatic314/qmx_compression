@@ -23,7 +23,7 @@ pub fn encode(docs: &[u32]) -> Vec<u8> {
     let source = source_integers.as_mut_ptr();
     let source_length = source_integers.len();
 
-    let mut compressed = vec![0u8; 8 * docs.len()];
+    let mut compressed = vec![0u8; 8 * docs.len() + 10];
     let encoded = compressed.as_mut_ptr();
     let encoded_buffer_length = compressed.len();
 
