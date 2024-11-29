@@ -123,7 +123,8 @@ namespace JASS
 				@param source [in] The encoded integers.
 				@param source_length [in] The length (in bytes) of the source buffer.
 			*/
-			virtual void decode(integer *decoded, size_t integers_to_decode, const void *source, size_t source_length);
+			// virtual void decode(integer *decoded, size_t integers_to_decode, const void *source, size_t source_length);
+			void decode(integer *decoded, size_t integers_to_decode, const void *source, size_t source_length);
 
 			/*
 				COMPRESS_INTEGER_QMX_IMPROVED::UNITTEST_ONE()
