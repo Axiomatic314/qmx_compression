@@ -1,6 +1,8 @@
 
 
 fn main() {
+
+    println!("cargo:rerun-if-changed=src");
     
     cc::Build::new()
         .file("src/jass.cpp")
