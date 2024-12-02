@@ -20,17 +20,14 @@ extern "C" {
 	alignas(16) static uint32_t static_mask_2[]  = {0x03, 0x03, 0x03, 0x03};								///< AND mask for 2-bit integers
 	alignas(16) static uint32_t static_mask_1[]  = {0x01, 0x01, 0x01, 0x01};								///< AND mask for 1-bit integers
 
-    			/*
-				SIMD::CUMULATIVE_SUM()
-				----------------------
-			*/
-			/*!
-				@brief Calculate the cumulative sum of the 32-bit integers in an AVX2 register.
-				@param elements [in] The 32-bit integers.
-				@return An AVX2 register holding the cumulative sums.
-			*/
-            #define forceinline __attribute__((always_inline)) inline
-			forceinline static __m256i cumulative_sum(__m256i elements)
+   
+	/*!
+		@brief Calculate the cumulative sum of the 32-bit integers in an AVX2 register.
+		@param elements [in] The 32-bit integers.
+		@return An AVX2 register holding the cumulative sums.
+	*/
+    #define forceinline __attribute__((always_inline)) inline
+	forceinline static __m256i cumulative_sum(__m256i elements)
 				{
 				/*
 					shift left by 1 integer and add
@@ -66,54 +63,51 @@ extern "C" {
 
 				return answer;
 				}
-
-    		// static void cumulative_sum_256(uint32_t *data, size_t length)
-            void cumulative_sum_256(uint32_t *data, size_t length)
-				{
-				/*
-					previous cumulative sum is zero
-				*/
-				__m256i previous_max = _mm256_setzero_si256();
-
-				/*
-					Loop over all the data (going too far if necessary)
-				*/
-				__m256i *end = (__m256i *)(data + length);
-				for (__m256i *block = (__m256i *)data; block < end; block++)
-					{
-					/*
-						load the next 8 integers
-					*/
-					__m256i current_set = _mm256_lddqu_si256(block);
-
-					/*
-						compute the cumulative sum of those
-					*/
-					current_set = cumulative_sum(current_set);
-
-					/*
-						add the previous maximum to each of them
-					*/
-					current_set = _mm256_add_epi32(current_set, previous_max);
-
-					/*
-						and write back out to the same location we read from
-					*/
-					_mm256_storeu_si256(block, current_set);
-
-					/*
-						Broadcast the largest number from the result for next time
-					*/
-					current_set = _mm256_shuffle_epi32(current_set, _MM_SHUFFLE(3, 3, 3, 3));
-					previous_max = _mm256_permute2x128_si256(current_set, current_set, 3 | (3 << 4));
-					}
-				}
+    // static void cumulative_sum_256(uint32_t *data, size_t length)
+    void cumulative_sum_256(uint32_t *data, size_t length){
+		/*
+			previous cumulative sum is zero
+		*/
+		__m256i previous_max = _mm256_setzero_si256();
+            
+		/*
+			Loop over all the data (going too far if necessary)
+		*/
+		__m256i *end = (__m256i *)(data + length);
+		for (__m256i *block = (__m256i *)data; block < end; block++){
+			/*
+				load the next 8 integers
+			*/
+			__m256i current_set = _mm256_lddqu_si256(block);
+			/*
+				compute the cumulative sum of those
+			*/
+			current_set = cumulative_sum(current_set);
+			/*
+				add the previous maximum to each of them
+			*/
+			current_set = _mm256_add_epi32(current_set, previous_max);
+			/*
+				and write back out to the same location we read from
+			*/
+			_mm256_storeu_si256(block, current_set);
+			/*
+				Broadcast the largest number from the result for next time
+			*/
+			current_set = _mm256_shuffle_epi32(current_set, _MM_SHUFFLE(3, 3, 3, 3));
+			previous_max = _mm256_permute2x128_si256(current_set, current_set, 3 | (3 << 4));
+		}
+	}
 
     /*!
         @brief Constructor
     */
     void *qmx_construct(void){
         return (void *)(new JASS::compress_integer_qmx_improved());
+    }
+
+    void qmx_destruct(void *self){
+        delete ((JASS::compress_integer_qmx_improved *) self);
     }
 
     /*!

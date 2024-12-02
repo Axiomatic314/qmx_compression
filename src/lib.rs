@@ -2,16 +2,11 @@ use std::ffi::c_void;
 
 extern {
     fn qmx_construct() -> *mut c_void;
+    fn qmx_destruct(object: *mut c_void);
     fn qmx_encode(object: *mut c_void, encoded: *mut u8, encoded_buffer_length: usize, source: *const u32, source_integers: usize) -> usize;
     // fn qmx_decode(object: *mut c_void, decoded: *mut u32, integers_to_decode: usize, source: *const u8, source_length: usize);
     fn qmx_decode(to: *mut u32, destination_integers: usize, source: *const u8, len: usize);
     fn cumulative_sum_256(data: *mut u32, length: usize);
-}
-
-pub struct MetaData {
-    pub impact: u16,
-    pub count: u32,
-    pub bytes: u32,
 }
 
 pub fn encode(docs: &[u32]) -> Vec<u8> {
@@ -35,6 +30,7 @@ pub fn encode(docs: &[u32]) -> Vec<u8> {
         let qmx = qmx_construct();
         let bytes = qmx_encode(qmx, encoded, encoded_buffer_length, source, source_length);
         output.extend_from_slice(&compressed[..bytes]);
+        qmx_destruct(qmx);
     }
 
     return output;
