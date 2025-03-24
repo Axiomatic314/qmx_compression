@@ -1,5 +1,5 @@
 [package]
-name = "compression"
+name = "qmx_compression"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,7 +9,3 @@ libc = "0.2.164"
 [build-dependencies]
 cc = "1.2.1"
 cmake = "0.1.51"
-
-[[bin]]
-name = "compression"
-path = "main.rs"

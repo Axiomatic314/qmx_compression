@@ -1,15 +1,15 @@
-# Compression
+# qmx_compression
 Simple crate to use the QMX compression algorithm in Rust.
 
 ## Usage
 Include the crate within `Cargo.toml` dependencies:
 ```
-compression = { version = "0.1.0", path = "../compression" }
+qmx_compression = { version = "0.1.0", path = "../qmx_compression" }
 ```
 Encoding and decoding is relatively straightforward:
 
 ```
-use compression::{encode,decode};
+use qmx_compression::{encode,decode};
 //encode slice of u32
 let encoded: Vec<u8> = encode(&[127,128,129,130]);
 //decode into buffer
