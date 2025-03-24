@@ -4,7 +4,6 @@ extern {
     fn qmx_construct() -> *mut c_void;
     fn qmx_destruct(object: *mut c_void);
     fn qmx_encode(object: *mut c_void, encoded: *mut u8, encoded_buffer_length: usize, source: *const u32, source_integers: usize) -> usize;
-    // fn qmx_decode(object: *mut c_void, decoded: *mut u32, integers_to_decode: usize, source: *const u8, source_length: usize);
     fn qmx_decode(to: *mut u32, destination_integers: usize, source: *const u8, len: usize);
     fn cumulative_sum_256(data: *mut u32, length: usize);
 }
@@ -45,17 +44,9 @@ pub fn decode(data: &[u8], output_buf: &mut[u32], count: u32){
 
     //decompress postings using qmx
     unsafe{
-        // let qmx = qmx_construct();
-        // qmx_decode(qmx, decoded, integers_to_decode, source, source_length);
         qmx_decode(decoded, integers_to_decode,source, source_length);
+        //convert from d-gaps efficiently
         cumulative_sum_256(decoded, integers_to_decode);
-
     }
     
-    // //convert from d-gaps
-    // let mut prev = output_buf[0];
-    // for curr in 1..integers_to_decode{
-    //     output_buf[curr] = output_buf[curr] + prev;
-    //     prev = output_buf[curr];
-    // }
 }

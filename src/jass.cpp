@@ -8,7 +8,7 @@
 
 extern "C" {
 
-    alignas(16) static uint32_t static_mask_21[]  = {0x1fffff, 0x1fffff, 0x1fffff, 0x1fffff};			///< AND mask for 21-bit integers
+    alignas(16) static uint32_t static_mask_21[]  = {0x1fffff, 0x1fffff, 0x1fffff, 0x1fffff};			    ///< AND mask for 21-bit integers
 	alignas(16) static uint32_t static_mask_12[]  = {0xfff, 0xfff, 0xfff, 0xfff};							///< AND mask for 12-bit integers
 	alignas(16) static uint32_t static_mask_10[] = {0x3ff, 0x3ff, 0x3ff, 0x3ff};							///< AND mask for 10-bit integers
 	alignas(16) static uint32_t static_mask_9[]  = {0x1ff, 0x1ff, 0x1ff, 0x1ff};							///< AND mask for 9-bit integers
@@ -124,15 +124,12 @@ extern "C" {
 
     /*!
 		@brief Decode a sequence of integers encoded with this codex.
-		@param decoded [out] The sequence of decoded integers.
-		@param integers_to_decode [in] The minimum number of integers to decode (it may decode more).
+		@param to [out] The sequence of decoded integers.
+		@param destination_integers [in] The minimum number of integers to decode (it may decode more).
 		@param source [in] The encoded integers.
-		@param source_length [in] The length (in bytes) of the source buffer.
+		@param len [in] The length (in bytes) of the source buffer.
 	*/
     void qmx_decode(uint32_t *to, size_t destination_integers, const uint8_t *source, size_t len){
-        // ((JASS::compress_integer_qmx_improved *)self)->decode(decoded, integers_to_decode, source, source_length);
-        // void compress_integer_qmx_improved::decode(integer *to, size_t destination_integers, const void *source, size_t len)
-		// {
 		__m128i byte_stream, byte_stream_2, tmp, tmp2, mask_21, mask_12, mask_10, mask_9, mask_7, mask_6, mask_5, mask_4, mask_3, mask_2, mask_1;
 		uint8_t *in = (uint8_t *)source;
 		uint8_t *keys = ((uint8_t *)source) + len - 1;
